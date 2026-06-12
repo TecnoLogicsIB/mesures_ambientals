@@ -1,6 +1,6 @@
-# Aules que Cremen - MakeCode micro:bit / IoT:bit
+# Mesurea ambientals - MakeCode micro:bit / IoT:bit
 
-Extensio experimental per provar si una micro:bit amb IoT:bit / ESP8266 pot enviar lectures a la plataforma Aules que Cremen.
+Extensio experimental per provar si una micro:bit amb IoT:bit / ESP8266 pot enviar lectures a una plataforma IoT.
 
 ## Blocs
 
