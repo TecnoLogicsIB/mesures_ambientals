@@ -74,7 +74,7 @@ namespace AulesQueCremen {
     export function provaPostSenseToken(temperatura: number, humitat: number): boolean {
         let body = jsonLectura(temperatura, humitat)
         let cmd = "AT+HTTPCLIENT=3,1,\"" + apiUrl() + "\",\"" + apiHost() + "\",\"" + apiPath() + "\",2,\"" + body + "\""
-        let res = ESP8266_IoT.sendRequest(cmd, "OK", 15000)
+        let res = ESP8266_IoT.sendRequest(cmd, "+HTTPCLIENT", 20000)
         return desa(res)
     }
 
@@ -91,12 +91,12 @@ namespace AulesQueCremen {
 
         // Afegim capcaleres HTTP abans del POST.
         // Aquesta part depen del firmware AT que porti la IoT:bit.
-        ESP8266_IoT.sendRequest("AT+HTTPCHEAD=0", "OK", 1000)
-        ESP8266_IoT.sendRequest("AT+HTTPCHEAD=1,\"Content-Type: application/json\"", "OK", 1000)
-        ESP8266_IoT.sendRequest("AT+HTTPCHEAD=1,\"Authorization: Bearer " + token + "\"", "OK", 1000)
+        ESP8266_IoT.sendAT("AT+HTTPCHEAD=0", 500)
+        ESP8266_IoT.sendAT("AT+HTTPCHEAD=1,\"Content-Type: application/json\"", 500)
+        ESP8266_IoT.sendAT("AT+HTTPCHEAD=1,\"Authorization: Bearer " + token + "\"", 500)
 
         let cmd = "AT+HTTPCLIENT=3,1,\"" + apiUrl() + "\",\"" + apiHost() + "\",\"" + apiPath() + "\",2,\"" + body + "\""
-        let res = ESP8266_IoT.sendRequest(cmd, "OK", 15000)
+        let res = ESP8266_IoT.sendRequest(cmd, "+HTTPCLIENT", 20000)
         return desa(res)
     }
 }
