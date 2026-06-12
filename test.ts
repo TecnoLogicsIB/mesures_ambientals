@@ -1,1 +1,0 @@
-AulesQueCremen.resposta()
