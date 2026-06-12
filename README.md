@@ -1,4 +1,4 @@
-# Mesurea ambientals - MakeCode micro:bit / IoT:bit
+# Mesures ambientals - MakeCode micro:bit / IoT:bit
 
 Extensio experimental per provar si una micro:bit amb IoT:bit / ESP8266 pot enviar lectures a una plataforma IoT.
 
