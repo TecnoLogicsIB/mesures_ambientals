@@ -18,7 +18,7 @@ namespace AulesQueCremen {
     }
 
     function jsonLectura(temperatura: number, humitat: number): string {
-        return "{\\\"temperature\\\":" + temperatura + ",\\\"humidity\\\":" + humitat + "}"
+    return "{\"temperature\":" + temperatura + ",\"humidity\":" + humitat + "}"
     }
 
     function desa(res: string): boolean {
