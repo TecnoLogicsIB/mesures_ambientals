@@ -1,1 +1,3 @@
-AulesQueCremen.provaPostSenseToken(22.5, 58)
+basic.forever(function () {
+
+})
