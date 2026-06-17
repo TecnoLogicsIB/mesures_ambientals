@@ -1,73 +1,74 @@
+// Extensio per Aules que Cremen
+// micro:bit + IoT:bit / ESP8266 -> ESP32 passarel·la local
+
 //% color=#ff6f00 icon="\uf1eb" block="Aules que Cremen"
 namespace AulesQueCremen {
 
-    let strBuf = ""
+    let ultimaResposta = ""
 
-    function serialDataHandler() {
-        strBuf += serial.readString()
+    function llegirSerial(): string {
+        let resposta = ""
+        let tros = serial.readString()
+
+        if (tros && tros.length > 0) {
+            resposta += tros
+        }
+
+        return resposta
     }
 
-    /**
-     * Inicialitza l'ESP8266
-     */
+    function buidaSerial(): void {
+        serial.readString()
+        ultimaResposta = ""
+    }
+
     //% block="inicialitza ESP8266 RX %rx TX %tx"
     //% rx.defl=SerialPin.P12
     //% tx.defl=SerialPin.P8
-    export function initESP8266(rx: SerialPin, tx: SerialPin) {
-
+    //% weight=100
+    export function initESP8266(rx: SerialPin, tx: SerialPin): void {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
-
         serial.setTxBufferSize(256)
         serial.setRxBufferSize(256)
-
-        serial.onDataReceived(
-            serial.delimiters(Delimiters.NewLine),
-            serialDataHandler
-        )
-
         basic.pause(1000)
+        buidaSerial()
     }
 
-    /**
-     * Envia una comanda AT
-     */
     //% block="envia AT %cmd"
-    export function sendAT(cmd: string) {
-
-        strBuf = ""
-
+    //% cmd.defl="AT"
+    //% weight=90
+    export function sendAT(cmd: string): void {
+        buidaSerial()
         serial.writeString(cmd + "\r\n")
     }
 
-    /**
-     * Envia text cru
-     */
     //% block="envia RAW %txt"
-    export function sendRaw(txt: string) {
-
+    //% weight=80
+    export function sendRaw(txt: string): void {
         serial.writeString(txt)
     }
 
-    /**
-     * Resposta rebuda
-     */
     //% block="resposta ESP8266"
+    //% weight=70
     export function response(): string {
-
-        return strBuf
+        return ultimaResposta
     }
 
-    /**
-     * Espera una resposta
-     */
     //% block="espera %txt durant %timeout ms"
+    //% txt.defl="OK"
+    //% timeout.defl=3000
+    //% weight=60
     export function waitFor(txt: string, timeout: number): boolean {
-
         let inici = input.runningTime()
 
         while (input.runningTime() - inici < timeout) {
+            let tros = llegirSerial()
 
-            if (strBuf.indexOf(txt) >= 0) {
+            if (tros.length > 0) {
+                ultimaResposta += tros
+            }
+
+            if (ultimaResposta.indexOf(txt) >= 0) {
                 return true
             }
 
