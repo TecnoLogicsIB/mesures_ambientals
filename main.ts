@@ -44,20 +44,15 @@ namespace AulesQueCremen {
     //% temps.defl=3000
     //% weight=60
     export function waitFor(txt: string, temps: number): boolean {
-        basic.showString("W")
+        let inici = input.runningTime()
 
-        let final = input.runningTime() + temps
-
-        while (input.runningTime() < final) {
+        while (input.runningTime() - inici < temps) {
             if (ultimaResposta.indexOf(txt) >= 0) {
-                basic.showString("R")
                 return true
             }
-
-            basic.pause(50)
+            basic.pause(100)
         }
 
-        basic.showString("T")
         return false
     }
 }
