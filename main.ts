@@ -86,13 +86,27 @@ namespace AulesQueCremen {
         basic.showString("2")
         basic.pause(300)
 
+        let enviat = false
+
+        ESP8266_IoT.registerMsgHandler("SEND OK", function (res: string) {
+            ultimaResposta = res
+            enviat = true
+        })
+
         serial.writeString(peticio)
 
-        if (esperaResposta("SEND OK", 8000)) {
-            basic.showString("S")
-            return true
+        let inici = input.runningTime()
+        while (input.runningTime() - inici < 8000) {
+            if (enviat) {
+                ESP8266_IoT.removeMsgHandler("SEND OK")
+                basic.showString("S")
+                return true
+            }
+            basic.pause(50)
         }
 
+        ESP8266_IoT.removeMsgHandler("SEND OK")
+        ultimaResposta = "SENSE_RESPOSTA"
         basic.showString("F")
         return false
     }
