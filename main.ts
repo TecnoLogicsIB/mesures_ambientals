@@ -1,25 +1,10 @@
-// Extensio per Aules que Cremen
-// micro:bit + IoT:bit / ESP8266 -> ESP32 passarel·la local
-
 //% color=#ff6f00 icon="\uf1eb" block="Aules que Cremen"
 namespace AulesQueCremen {
 
     let ultimaResposta = ""
 
-    function llegirSerial(): string {
-        let resposta = ""
-        let tros = serial.readString()
-
-        if (tros && tros.length > 0) {
-            resposta += tros
-        }
-
-        return resposta
-    }
-
-    function buidaSerial(): void {
-        serial.readString()
-        ultimaResposta = ""
+    function quanArribaSerial(): void {
+        ultimaResposta += serial.readString()
     }
 
     //% block="inicialitza ESP8266 RX %rx TX %tx"
@@ -30,15 +15,21 @@ namespace AulesQueCremen {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         serial.setTxBufferSize(256)
         serial.setRxBufferSize(256)
+
+        serial.onDataReceived(
+            serial.delimiters(Delimiters.NewLine),
+            quanArribaSerial
+        )
+
         basic.pause(1000)
-        buidaSerial()
+        ultimaResposta = ""
     }
 
     //% block="envia AT %cmd"
     //% cmd.defl="AT"
     //% weight=90
     export function sendAT(cmd: string): void {
-        buidaSerial()
+        ultimaResposta = ""
         serial.writeString(cmd + "\r\n")
     }
 
@@ -62,16 +53,9 @@ namespace AulesQueCremen {
         let inici = input.runningTime()
 
         while (input.runningTime() - inici < timeout) {
-            let tros = llegirSerial()
-
-            if (tros.length > 0) {
-                ultimaResposta += tros
-            }
-
             if (ultimaResposta.indexOf(txt) >= 0) {
                 return true
             }
-
             basic.pause(20)
         }
 
