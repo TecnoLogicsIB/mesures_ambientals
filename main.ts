@@ -64,7 +64,8 @@ namespace AulesQueCremen {
 
         basic.showString("2")
 
-        res = ESP8266_IoT.sendRequest(peticio, "SEND OK", 8000)
+        ESP8266_IoT.sendAT(peticio, 100)
+        res = ESP8266_IoT.sendRequest("", "SEND OK", 8000)
 
         if (desa(res) && res.indexOf("SEND OK") >= 0) {
             basic.showString("S")
