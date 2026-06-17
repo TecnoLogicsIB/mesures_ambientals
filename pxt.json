@@ -1,6 +1,6 @@
 {
   "name": "aules-que-cremen",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Extensio MakeCode per enviar lectures a Aules que Cremen amb micro:bit, IoT:bit i ESP32 passarel·la local.",
   "license": "MIT",
   "dependencies": {
