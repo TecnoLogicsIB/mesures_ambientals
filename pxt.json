@@ -1,7 +1,7 @@
 {
   "name": "aules-que-cremen",
-  "version": "0.0.6",
-  "description": "Extensio experimental MakeCode per enviar lectures a Aules que Cremen amb IoT:bit / ESP8266.",
+  "version": "0.0.7",
+  "description": "Extensio MakeCode per enviar lectures a Aules que Cremen amb micro:bit, IoT:bit i ESP32 passarel·la local.",
   "license": "MIT",
   "dependencies": {
     "core": "*",
@@ -10,9 +10,6 @@
   "files": [
     "README.md",
     "main.ts"
-  ],
-  "testFiles": [
-    "test.ts"
   ],
   "public": true,
   "supportedTargets": [
