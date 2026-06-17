@@ -16,6 +16,17 @@ namespace AulesQueCremen {
         }
     }
 
+    function esperaResposta(text: string, timeout: number): boolean {
+        let res = ESP8266_IoT.sendRequest("", text, timeout)
+        desa(res)
+        return ultimaResposta.indexOf(text) >= 0
+    }
+
+    function enviaComanda(comanda: string, espera: string, timeout: number): boolean {
+        ESP8266_IoT.sendAT(comanda, 100)
+        return esperaResposta(espera, timeout)
+    }
+
     //% block="ultima resposta Aules que Cremen"
     //% weight=70
     export function resposta(): string {
@@ -35,9 +46,20 @@ namespace AulesQueCremen {
     //% temperatura.defl=25.3
     //% humitat.defl=61
     //% weight=100
-    export function enviaLecturaESP32(ip: string, aula: string, temperatura: number, humitat: number): boolean {
+    export function enviaLecturaESP32(
+        ip: string,
+        aula: string,
+        temperatura: number,
+        humitat: number
+    ): boolean {
 
-        let ruta = "/lectura?aula=" + aula + "&t=" + temperatura + "&h=" + humitat
+        let ruta =
+            "/lectura?aula=" +
+            aula +
+            "&t=" +
+            temperatura +
+            "&h=" +
+            humitat
 
         let peticio =
             "GET " + ruta + " HTTP/1.1\r\n" +
@@ -45,29 +67,28 @@ namespace AulesQueCremen {
             "Connection: close\r\n\r\n"
 
         let cmdStart = 'AT+CIPSTART="TCP","' + ip + '",80'
-        let res = ESP8266_IoT.sendRequest(cmdStart, "OK", 8000)
 
-        if (!desa(res) || res.indexOf("OK") < 0) {
+        if (!enviaComanda(cmdStart, "OK", 8000)) {
             basic.showString("E")
             return false
         }
 
         basic.showString("1")
+        basic.pause(300)
 
         let cmdSend = "AT+CIPSEND=" + peticio.length
-        res = ESP8266_IoT.sendRequest(cmdSend, ">", 5000)
 
-        if (!desa(res) || res.indexOf(">") < 0) {
+        if (!enviaComanda(cmdSend, ">", 5000)) {
             basic.showString("C")
             return false
         }
 
         basic.showString("2")
+        basic.pause(300)
 
         ESP8266_IoT.sendAT(peticio, 100)
-        res = ESP8266_IoT.sendRequest("", "SEND OK", 8000)
 
-        if (desa(res) && res.indexOf("SEND OK") >= 0) {
+        if (esperaResposta("SEND OK", 8000)) {
             basic.showString("S")
             return true
         }
