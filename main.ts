@@ -1,6 +1,3 @@
-// Extensio per Aules que Cremen
-// micro:bit + IoT:bit / ESP8266 -> ESP32 passarel·la local
-
 //% color=#ff6f00 icon="\uf2c9" block="Aules que Cremen"
 namespace AulesQueCremen {
 
@@ -16,15 +13,11 @@ namespace AulesQueCremen {
         }
     }
 
-    function esperaResposta(text: string, timeout: number): boolean {
-        let res = ESP8266_IoT.sendRequest("", text, timeout)
-        desa(res)
-        return ultimaResposta.indexOf(text) >= 0
-    }
-
     function enviaComanda(comanda: string, espera: string, timeout: number): boolean {
         ESP8266_IoT.sendAT(comanda, 100)
-        return esperaResposta(espera, timeout)
+        let res = ESP8266_IoT.waitForResponse(espera, timeout)
+        desa(res)
+        return ultimaResposta.indexOf(espera) >= 0
     }
 
     //% block="ultima resposta Aules que Cremen"
@@ -46,20 +39,9 @@ namespace AulesQueCremen {
     //% temperatura.defl=25.3
     //% humitat.defl=61
     //% weight=100
-    export function enviaLecturaESP32(
-        ip: string,
-        aula: string,
-        temperatura: number,
-        humitat: number
-    ): boolean {
+    export function enviaLecturaESP32(ip: string, aula: string, temperatura: number, humitat: number): boolean {
 
-        let ruta =
-            "/lectura?aula=" +
-            aula +
-            "&t=" +
-            temperatura +
-            "&h=" +
-            humitat
+        let ruta = "/lectura?aula=" + aula + "&t=" + temperatura + "&h=" + humitat
 
         let peticio =
             "GET " + ruta + " HTTP/1.1\r\n" +
@@ -86,27 +68,16 @@ namespace AulesQueCremen {
         basic.showString("2")
         basic.pause(300)
 
-        let enviat = false
-
-        ESP8266_IoT.registerMsgHandler("SEND OK", function (res: string) {
-            ultimaResposta = res
-            enviat = true
-        })
-
         serial.writeString(peticio)
 
-        let inici = input.runningTime()
-        while (input.runningTime() - inici < 8000) {
-            if (enviat) {
-                ESP8266_IoT.removeMsgHandler("SEND OK")
-                basic.showString("S")
-                return true
-            }
-            basic.pause(50)
+        let res = ESP8266_IoT.waitForResponse("SEND OK", 8000)
+        desa(res)
+
+        if (ultimaResposta.indexOf("SEND OK") >= 0) {
+            basic.showString("S")
+            return true
         }
 
-        ESP8266_IoT.removeMsgHandler("SEND OK")
-        ultimaResposta = "SENSE_RESPOSTA"
         basic.showString("F")
         return false
     }
