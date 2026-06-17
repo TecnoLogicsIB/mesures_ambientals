@@ -21,8 +21,8 @@ namespace AulesQueCremen {
             quanArribaSerial
         )
 
-        basic.pause(1000)
         ultimaResposta = ""
+        basic.pause(1000)
     }
 
     //% block="envia AT %cmd"
@@ -33,32 +33,31 @@ namespace AulesQueCremen {
         serial.writeString(cmd + "\r\n")
     }
 
-    //% block="envia RAW %txt"
-    //% weight=80
-    export function sendRaw(txt: string): void {
-        serial.writeString(txt)
-    }
-
     //% block="resposta ESP8266"
     //% weight=70
     export function response(): string {
         return ultimaResposta
     }
 
-    //% block="espera %txt durant %timeout ms"
+    //% block="espera %txt durant %temps ms"
     //% txt.defl="OK"
-    //% timeout.defl=3000
+    //% temps.defl=3000
     //% weight=60
-    export function waitFor(txt: string, timeout: number): boolean {
-        let inici = input.runningTime()
+    export function waitFor(txt: string, temps: number): boolean {
+        basic.showString("W")
 
-        while (input.runningTime() - inici < timeout) {
+        let final = input.runningTime() + temps
+
+        while (input.runningTime() < final) {
             if (ultimaResposta.indexOf(txt) >= 0) {
+                basic.showString("R")
                 return true
             }
-            basic.pause(20)
+
+            basic.pause(50)
         }
 
+        basic.showString("T")
         return false
     }
 }
