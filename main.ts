@@ -86,7 +86,7 @@ namespace AulesQueCremen {
         basic.showString("2")
         basic.pause(300)
 
-        ESP8266_IoT.sendAT(peticio, 100)
+        serial.writeString(peticio)
 
         if (esperaResposta("SEND OK", 8000)) {
             basic.showString("S")
